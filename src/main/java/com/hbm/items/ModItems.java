@@ -530,6 +530,10 @@ public class ModItems {
 		public static final Item euphemium_plate = new ArmorEuphemium(MainRegistry.enumArmorMaterialEuphemium, -1, EntityEquipmentSlot.CHEST, "euphemium_plate").setMaxStackSize(1);
 		public static final Item euphemium_legs = new ArmorEuphemium(MainRegistry.enumArmorMaterialEuphemium, -1, EntityEquipmentSlot.LEGS, "euphemium_legs").setMaxStackSize(1);
 		public static final Item euphemium_boots = new ArmorEuphemium(MainRegistry.enumArmorMaterialEuphemium, -1, EntityEquipmentSlot.FEET, "euphemium_boots").setMaxStackSize(1);
+		public static final Item anti_schrabidium_helmet = new ArmorAntiSchrabbidium(MainRegistry.enumArmorMaterialAntiSchrabbidium, -1, EntityEquipmentSlot.HEAD, "anti_schrabidium_helmet").setMaxStackSize(1);
+		public static final Item anti_schrabidium_plate = new ArmorAntiSchrabbidium(MainRegistry.enumArmorMaterialAntiSchrabbidium, -1, EntityEquipmentSlot.CHEST, "anti_schrabidium_plate").setMaxStackSize(1);
+		public static final Item anti_schrabidium_legs = new ArmorAntiSchrabbidium(MainRegistry.enumArmorMaterialAntiSchrabbidium, -1, EntityEquipmentSlot.LEGS, "anti_schrabidium_legs").setMaxStackSize(1);
+		public static final Item anti_schrabidium_boots = new ArmorAntiSchrabbidium(MainRegistry.enumArmorMaterialAntiSchrabbidium, -1, EntityEquipmentSlot.FEET, "anti_schrabidium_boots").setMaxStackSize(1);
 		public static final Item jackt = new ModArmor(MainRegistry.enumArmorMaterialSteel, -1, EntityEquipmentSlot.CHEST, "jackt").setMaxStackSize(1);
 		public static final Item jackt2 = new ModArmor(MainRegistry.enumArmorMaterialSteel, -1, EntityEquipmentSlot.CHEST, "jackt2").setMaxStackSize(1);
 		public static final Item steel_helmet = new ArmorFSB(MainRegistry.enumArmorMaterialSteel, -1, EntityEquipmentSlot.HEAD, RefStrings.MODID + ":textures/armor/steel_1.png", "steel_helmet").setMod(0.9F).setProtectionLevel(20F).setMaxStackSize(1);

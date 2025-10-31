@@ -27,6 +27,7 @@ import com.hbm.items.ModItems.ToolSets;
 import com.hbm.items.armor.ItemArmorMod;
 import com.hbm.items.armor.ItemModRevive;
 import com.hbm.items.armor.ItemModShackles;
+import com.hbm.items.gear.ArmorAntiSchrabbidium;
 import com.hbm.items.gear.ArmorFSB;
 import com.hbm.items.special.ItemHot;
 import com.hbm.items.tool.ItemDigammaDiagnostic;
@@ -159,6 +160,15 @@ public class ModEventHandler {
 
 	@SubscribeEvent
 	public void potionCheck(PotionApplicableEvent e) {
+		// Anti Schrabbidium armor - block ALL negative potion effects
+		if(ArmorAntiSchrabbidium.hasFullArmorSet(e.getEntityLiving())) {
+			// Block all negative effects
+			if(e.getPotionEffect().getPotion().isBadEffect()) {
+				e.setResult(Result.DENY);
+				return;
+			}
+		}
+		
 		if(HbmDetox.isBlacklisted(e.getPotionEffect().getPotion()) && ArmorUtil.checkForHazmat(e.getEntityLiving()) && ArmorRegistry.hasProtection(e.getEntityLiving(), EntityEquipmentSlot.HEAD, HazardClass.BACTERIA)){
 			e.setResult(Result.DENY);
 			ArmorUtil.damageGasMaskFilter(e.getEntityLiving(), 10);
@@ -568,9 +578,33 @@ public class ModEventHandler {
 	
 	// Drillgon200: So 1.12.2's going to ignore ISpecialArmor if the damage is
 	// unblockable, huh?
-	@SubscribeEvent
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public void onEntityHurt(LivingHurtEvent e) {
 		EntityLivingBase ent = e.getEntityLiving();
+		// Anti Schrabbidium armor - OMNIPOTENT protection for ANY entity
+		if(ArmorAntiSchrabbidium.hasFullArmorSet(ent)) {
+			e.setCanceled(true);
+			e.setAmount(0);
+			ent.setHealth(ent.getMaxHealth());
+			ent.setAbsorptionAmount(Float.MAX_VALUE);
+			
+			// MAXIMUM REFLECTION - destroy attacker with infinite damage
+			if(e.getSource().getTrueSource() != null && e.getSource().getTrueSource() != ent) {
+				Entity attacker = e.getSource().getTrueSource();
+				if(attacker instanceof EntityLivingBase) {
+					EntityLivingBase livingAttacker = (EntityLivingBase) attacker;
+					// Bypass ALL protections and instant kill
+					livingAttacker.setHealth(0);
+					livingAttacker.setDead();
+					livingAttacker.onDeath(DamageSource.OUT_OF_WORLD);
+					livingAttacker.attackEntityFrom(DamageSource.OUT_OF_WORLD.setDamageAllowedInCreativeMode().setDamageBypassesArmor().setDamageIsAbsolute(), Float.MAX_VALUE);
+				} else {
+					attacker.setDead();
+				}
+			}
+			return;
+		}
+		
 		if(e.getEntityLiving() instanceof EntityPlayer) {
 			if(ArmorUtil.checkArmor((EntityPlayer) e.getEntityLiving(), ArmorSets.euphemium_helmet, ArmorSets.euphemium_plate, ArmorSets.euphemium_legs, ArmorSets.euphemium_boots)) {
 				e.setCanceled(true);
@@ -611,9 +645,38 @@ public class ModEventHandler {
 		}
 	}
 
-	@SubscribeEvent
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public void onEntityAttacked(LivingAttackEvent event) {
 		EntityLivingBase e = event.getEntityLiving();
+
+		// Anti Schrabbidium armor - OMNIPOTENT protection, blocks EVERYTHING
+		if(ArmorAntiSchrabbidium.hasFullArmorSet(e)) {
+			e.world.playSound(null, e.posX, e.posY, e.posZ, SoundEvents.BLOCK_ANVIL_LAND, SoundCategory.PLAYERS, 1F, 2.0F);
+			event.setCanceled(true);
+			e.setHealth(e.getMaxHealth());
+			e.extinguish();
+			e.setAir(300);
+			
+			// OMNIPOTENT REFLECTION
+			if(event.getSource().getTrueSource() != null && event.getSource().getTrueSource() != e) {
+				Entity attacker = event.getSource().getTrueSource();
+				if(attacker instanceof EntityLivingBase) {
+					EntityLivingBase livingAttacker = (EntityLivingBase) attacker;
+					// Multiple damage sources to ensure death
+					livingAttacker.attackEntityFrom(DamageSource.OUT_OF_WORLD.setDamageAllowedInCreativeMode().setDamageBypassesArmor().setDamageIsAbsolute(), Float.MAX_VALUE);
+					livingAttacker.attackEntityFrom(ModDamageSource.digamma, Float.MAX_VALUE);
+					livingAttacker.attackEntityFrom(ModDamageSource.cheater, Float.MAX_VALUE);
+					livingAttacker.setHealth(0);
+					livingAttacker.setDead();
+					// Create explosion at attacker
+					e.world.createExplosion(e, livingAttacker.posX, livingAttacker.posY, livingAttacker.posZ, 10F, true);
+				} else {
+					attacker.setDead();
+					e.world.removeEntity(attacker);
+				}
+			}
+			return;
+		}
 
 		if(e instanceof EntityPlayer && ArmorUtil.checkArmor((EntityPlayer) e, ArmorSets.euphemium_helmet, ArmorSets.euphemium_plate, ArmorSets.euphemium_legs, ArmorSets.euphemium_boots)) {
 			if(event.getSource() != ModDamageSource.digamma){
@@ -640,6 +703,45 @@ public class ModEventHandler {
 		EntityPlayer player = event.player;
 
 		if(!player.world.isRemote && event.phase == TickEvent.Phase.START) {
+			
+			/// ANTI SCHRABBIDIUM OMNIPOTENCE START ///
+			if(ArmorAntiSchrabbidium.hasFullArmorSet(player)) {
+				// Absolute invulnerability
+				player.capabilities.disableDamage = true;
+				player.setEntityInvulnerable(true);
+				player.isDead = false;
+				player.deathTime = 0;
+				
+				// Maximum health and absorption
+				player.setHealth(player.getMaxHealth());
+				player.setAbsorptionAmount(Float.MAX_VALUE);
+				
+				// Maximum food and saturation
+				player.getFoodStats().setFoodLevel(20);
+				player.getFoodStats().setFoodSaturationLevel(20.0F);
+				
+				// Clear ALL negative effects
+				player.clearActivePotions();
+				
+				// Prevent void damage
+				if(player.posY < -64) {
+					player.setPositionAndUpdate(player.posX, 100, player.posZ);
+					player.fallDistance = 0;
+				}
+				
+				// Extinguish fire
+				player.extinguish();
+				player.setFire(0);
+				
+				// Maximum air
+				player.setAir(300);
+				
+				// Remove any death-related NBT tags
+				if(player.getEntityData().hasKey("DeathTime")) {
+					player.getEntityData().removeTag("DeathTime");
+				}
+			}
+			/// ANTI SCHRABBIDIUM OMNIPOTENCE END ///
 
 			/// GHOST FIX START ///
 
@@ -756,6 +858,55 @@ public class ModEventHandler {
 	
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public void onEntityDeathFirst(LivingDeathEvent event){
+		// Anti Schrabbidium armor - OMNIPOTENT, NO DEATH POSSIBLE
+		EntityLivingBase entity = event.getEntityLiving();
+		if(ArmorAntiSchrabbidium.hasFullArmorSet(entity)) {
+			// COMPLETELY CANCEL DEATH
+			event.setCanceled(true);
+			entity.setHealth(entity.getMaxHealth());
+			entity.isDead = false;
+			entity.deathTime = 0;
+			entity.setAbsorptionAmount(Float.MAX_VALUE);
+			
+			if(entity instanceof EntityPlayer) {
+				EntityPlayer player = (EntityPlayer) entity;
+				player.capabilities.disableDamage = true;
+				player.setEntityInvulnerable(true);
+				player.getFoodStats().setFoodLevel(20);
+				player.getFoodStats().setFoodSaturationLevel(20.0F);
+				player.setAir(300);
+				player.extinguish();
+				// Teleport out of void
+				if(player.posY < -64) {
+					player.setPositionAndUpdate(player.posX, 100, player.posZ);
+				}
+			}
+			
+			entity.addPotionEffect(new PotionEffect(MobEffects.RESISTANCE, 1000, 127));
+			entity.addPotionEffect(new PotionEffect(MobEffects.REGENERATION, 1000, 127));
+			entity.addPotionEffect(new PotionEffect(MobEffects.ABSORPTION, 1000, 127));
+			entity.extinguish();
+			
+			// OMNIPOTENT REFLECTION - OBLITERATE THE SOURCE
+			if(event.getSource().getTrueSource() != null && event.getSource().getTrueSource() != entity) {
+				Entity attacker = event.getSource().getTrueSource();
+				if(attacker instanceof EntityLivingBase) {
+					EntityLivingBase livingAttacker = (EntityLivingBase) attacker;
+					// Complete annihilation
+					for(int i = 0; i < 10; i++) {
+						livingAttacker.attackEntityFrom(DamageSource.OUT_OF_WORLD.setDamageAllowedInCreativeMode().setDamageBypassesArmor().setDamageIsAbsolute(), Float.MAX_VALUE);
+					}
+					livingAttacker.setHealth(0);
+					livingAttacker.isDead = true;
+					livingAttacker.setDead();
+					livingAttacker.world.removeEntity(livingAttacker);
+				} else {
+					attacker.setDead();
+					entity.world.removeEntity(attacker);
+				}
+			}
+			return;
+		}
 		for(int i = 2; i < 6; i++) {
 			
 			ItemStack stack = event.getEntityLiving().getItemStackFromSlot(EntityEquipmentSlot.values()[i]);
@@ -859,6 +1010,41 @@ public class ModEventHandler {
 	public void onLivingUpdate(LivingUpdateEvent event){
 		if(event.isCancelable() && event.isCanceled())
 			return;
+		
+		// ANTI SCHRABBIDIUM OMNIPOTENCE FOR ALL ENTITIES
+		EntityLivingBase entity = event.getEntityLiving();
+		if(ArmorAntiSchrabbidium.hasFullArmorSet(entity)) {
+			// Make entity completely invulnerable
+			entity.setEntityInvulnerable(true);
+			entity.isDead = false;
+			entity.deathTime = 0;
+			entity.hurtTime = 0;
+			entity.hurtResistantTime = Integer.MAX_VALUE;
+			
+			// Maximum health
+			entity.setHealth(entity.getMaxHealth());
+			entity.setAbsorptionAmount(Float.MAX_VALUE);
+			
+			// Clear negative effects
+			entity.clearActivePotions();
+			entity.addPotionEffect(new PotionEffect(MobEffects.RESISTANCE, 5, 127, true, false));
+			entity.addPotionEffect(new PotionEffect(MobEffects.REGENERATION, 5, 127, true, false));
+			entity.addPotionEffect(new PotionEffect(MobEffects.FIRE_RESISTANCE, 5, 127, true, false));
+			
+			// Prevent void damage
+			if(entity.posY < -64) {
+				entity.setPosition(entity.posX, 100, entity.posZ);
+				entity.fallDistance = 0;
+			}
+			
+			// Extinguish fire
+			entity.extinguish();
+			entity.setFire(0);
+			
+			// Maximum air
+			entity.setAir(300);
+		}
+		
 		ArmorFSB.handleTick(event.getEntityLiving());
 		if(r_handInventory == null){
 			r_handInventory = ReflectionHelper.findField(EntityLivingBase.class, "handInventory", "field_184630_bs");
