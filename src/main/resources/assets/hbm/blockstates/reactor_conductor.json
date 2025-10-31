@@ -1,0 +1,7 @@
+{
+	"variants": {
+		"normal": { "model": "hbm:pwr_conductor" },
+		"activated=true": { "model": "hbm:reactor_conductor" },
+     	   	"activated=false": { "model": "hbm:reactor_conductor" }
+	}
+}

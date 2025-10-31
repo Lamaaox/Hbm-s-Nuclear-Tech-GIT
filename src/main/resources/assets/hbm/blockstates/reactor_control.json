@@ -1,0 +1,7 @@
+{
+	"variants": {
+		"normal": { "model": "hbm:pwr_control" },
+		"activated=true": { "model": "hbm:reactor_control" },
+     	   	"activated=false": { "model": "hbm:reactor_control" }
+	}
+}
