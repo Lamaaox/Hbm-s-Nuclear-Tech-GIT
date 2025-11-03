@@ -24,7 +24,7 @@ public class ArmorAntiSchrabbidium extends ItemArmor implements ISpecialArmor {
 		super(materialIn, renderIndexIn, equipmentSlotIn);
 		this.setTranslationKey(s);
 		this.setRegistryName(s);
-		this.setCreativeTab(null);
+		this.setCreativeTab(net.minecraft.creativetab.CreativeTabs.COMBAT);
 		
 		ModItems.ALL_ITEMS.add(this);
 	}
