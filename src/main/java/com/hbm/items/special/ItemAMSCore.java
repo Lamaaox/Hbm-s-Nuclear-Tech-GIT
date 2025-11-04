@@ -63,6 +63,16 @@ public class ItemAMSCore extends Item {
 			list.add("ten bucks.");
 		}
 
+		if (this == ModItems.ams_core_eyeofgarbagebin) {
+			list.add("§cWARNING: CATASTROPHIC INSTABILITY DETECTED§r");
+			list.add("A garbage bin that somehow achieved nuclear");
+			list.add("fusion. Scientists are baffled. The bin itself");
+			list.add("appears to be collapsing into a singularity of");
+			list.add("pure waste energy. When this thing goes critical,");
+			list.add("it doesn't just explode - it OBLITERATES.");
+			list.add("§cDO NOT USE NEAR ANYTHING YOU VALUE§r");
+		}
+
 		if (this == ModItems.ams_core_thingy) {
 			if(MainRegistry.polaroidID == 11) {
 				list.add("Yeah I'm not even gonna question that one.");

@@ -6,6 +6,7 @@ import com.hbm.lib.HBMSoundEvents;
 import com.hbm.main.MainRegistry;
 import com.hbm.tileentity.machine.TileEntityCoreEmitter;
 import com.hbm.tileentity.machine.TileEntityCoreInjector;
+import com.hbm.tileentity.machine.TileEntityCoreCreativeInjector;
 import com.hbm.tileentity.machine.TileEntityCoreReceiver;
 import com.hbm.tileentity.machine.TileEntityCoreStabilizer;
 import com.leafia.contents.machines.powercores.dfc.DFCBaseTE;
@@ -66,6 +67,8 @@ public class CoreComponent extends BlockContainer {
             return new TileEntityCoreReceiver();
         if (this == ModBlocks.dfc_injector)
             return new TileEntityCoreInjector();
+        if (this == ModBlocks.dfc_creative_injector)
+            return new TileEntityCoreCreativeInjector();
         if (this == ModBlocks.dfc_stabilizer)
             return new TileEntityCoreStabilizer();
         if (this == ModBlocks.dfc_reinforced)
@@ -115,7 +118,7 @@ public class CoreComponent extends BlockContainer {
 
                 player.openGui(MainRegistry.instance, ModBlocks.guiID_dfc_receiver, world, pos.getX(), pos.getY(), pos.getZ());
 
-            if (this == ModBlocks.dfc_injector)
+            if (this == ModBlocks.dfc_injector || this == ModBlocks.dfc_creative_injector)
 
                 player.openGui(MainRegistry.instance, ModBlocks.guiID_dfc_injector, world, pos.getX(), pos.getY(), pos.getZ());
 

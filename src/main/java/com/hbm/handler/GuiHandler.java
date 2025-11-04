@@ -487,6 +487,9 @@ public class GuiHandler implements IGuiHandler {
 				}
 				return null;
 			case ModBlocks.guiID_dfc_injector:
+				if(entity instanceof TileEntityCoreCreativeInjector) {
+					return new ContainerCoreCreativeInjector(player.inventory, (TileEntityCoreCreativeInjector) entity);
+				}
 				if(entity instanceof TileEntityCoreInjector) {
 					return new ContainerCoreInjector(player.inventory, (TileEntityCoreInjector) entity);
 				}
@@ -1128,6 +1131,9 @@ public class GuiHandler implements IGuiHandler {
 				}
 				return null;
 			case ModBlocks.guiID_dfc_injector:
+				if(entity instanceof TileEntityCoreCreativeInjector) {
+					return new GUICoreCreativeInjector(player.inventory, (TileEntityCoreCreativeInjector) entity);
+				}
 				if(entity instanceof TileEntityCoreInjector) {
 					return new GUICoreInjector(player.inventory, (TileEntityCoreInjector) entity);
 				}

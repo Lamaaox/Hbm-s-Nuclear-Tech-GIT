@@ -3244,6 +3244,7 @@ public class ModItems {
 	public static final Item ams_core_sing = new ItemAMSCore(500, 0.8F, 1.5F, "ams_core_sing").setMaxStackSize(1).setCreativeTab(MainRegistry.controlTab);
 	public static final Item ams_core_wormhole = new ItemAMSCore(650, 1.05F, 0.8F, "ams_core_wormhole").setMaxStackSize(1).setCreativeTab(MainRegistry.controlTab);
 	public static final Item ams_core_eyeofharmony = new ItemAMSCore(900, 2.25F, 2.0F, "ams_core_eyeofharmony").setMaxStackSize(1).setCreativeTab(MainRegistry.controlTab);
+	public static final Item ams_core_eyeofgarbagebin = new ItemAMSCore(2000000000, 2.25F, 2.0F, "ams_core_eyeofgarbagebin").setMaxStackSize(1).setCreativeTab(MainRegistry.controlTab);
 	public static final Item ams_core_thingy = new ItemAMSCore(2500, 0.7F, 0.7F, "ams_core_thingy").setMaxStackSize(1).setCreativeTab(MainRegistry.consumableTab);
 	public static final Item ams_muzzle = new ItemCustomLore("ams_muzzle").setMaxStackSize(1).setCreativeTab(MainRegistry.controlTab);
 	

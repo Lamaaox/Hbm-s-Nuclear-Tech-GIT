@@ -14,6 +14,7 @@ import com.hbm.render.misc.BeamPronter.EnumWaveType;
 import com.hbm.tileentity.TileEntityMachineBase;
 import com.hbm.tileentity.machine.TileEntityCoreEmitter;
 import com.hbm.tileentity.machine.TileEntityCoreInjector;
+import com.hbm.tileentity.machine.TileEntityCoreCreativeInjector;
 import com.hbm.tileentity.machine.TileEntityCoreReceiver;
 import com.hbm.tileentity.machine.TileEntityCoreStabilizer;
 import com.leafia.contents.machines.powercores.dfc.DFCBaseTE;
@@ -72,7 +73,7 @@ public class RenderCoreComponent extends TileEntitySpecialRenderer<TileEntityMac
 				mdl = ResourceManager.dfc_reinforced;
 			else
 				mdl = ResourceManager.dfc_receiver;
-		} else if (tileEntity instanceof TileEntityCoreInjector) {
+		} else if (tileEntity instanceof TileEntityCoreInjector || tileEntity instanceof TileEntityCoreCreativeInjector) {
 			bindTexture(ResourceManager.dfc_injector_tex);
 			mdl = ResourceManager.dfc_injector;
 		} else if (tileEntity instanceof TileEntityCoreStabilizer) {
@@ -179,6 +180,20 @@ public class RenderCoreComponent extends TileEntitySpecialRenderer<TileEntityMac
 
 		if (tileEntity instanceof TileEntityCoreInjector) {
 			TileEntityCoreInjector injector = (TileEntityCoreInjector) tileEntity;
+			//int range = injector.beam;
+
+			if (range > 0) {
+				RenderHelper.bindBlockTexture();
+				if (injector.tanks[0].getFluidAmount() > 0)
+					BeamPronter.prontBeam(Vec3.createVectorHelper(0, 0, -range), EnumWaveType.SPIRAL, EnumBeamType.SOLID, ModForgeFluids.getFluidColor(injector.tanks[0].getFluid().getFluid()), 0x7F7F7F, (int) tileEntity.getWorld().getTotalWorldTime() * -2 % 360, (int) Math.round(range), 0.09F, 3, 0.0625F);
+				if (injector.tanks[1].getFluidAmount() > 0)
+					BeamPronter.prontBeam(Vec3.createVectorHelper(0, 0, -range), EnumWaveType.SPIRAL, EnumBeamType.SOLID, ModForgeFluids.getFluidColor(injector.tanks[1].getFluid().getFluid()), 0x7F7F7F, (int) tileEntity.getWorld().getTotalWorldTime() * -2 % 360 + 180, (int) Math.round(range), 0.09F, 3, 0.0625F);
+			}
+			bindTexture(ResourceManager.dfc_injector_tex);
+		}
+
+		if (tileEntity instanceof TileEntityCoreCreativeInjector) {
+			TileEntityCoreCreativeInjector injector = (TileEntityCoreCreativeInjector) tileEntity;
 			//int range = injector.beam;
 
 			if (range > 0) {

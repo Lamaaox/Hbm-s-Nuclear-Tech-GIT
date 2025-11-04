@@ -4789,6 +4789,7 @@ tile.dfc_cemitter.name=Creative DFC Booster
 tile.dfc_core.name=DFC Core Chamber
 tile.dfc_emitter.name=DFC Booster
 tile.dfc_injector.name=DFC Fuel Injector
+tile.dfc_creative_injector.name=Creative DFC Fuel Injector
 tile.dfc_receiver.name=DFC Absorber
 tile.dfc_reinforced.name=DFC Reinforced Absorber
 tile.dfc_stabilizer.name=DFC Stabilizer

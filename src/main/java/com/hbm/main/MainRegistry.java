@@ -599,6 +599,7 @@ public class MainRegistry {
 		GameRegistry.registerTileEntity(TileEntityCoreEmitter.class, new ResourceLocation(RefStrings.MODID, "tileentity_core_emitter"));
 		GameRegistry.registerTileEntity(TileEntityCoreReceiver.class, new ResourceLocation(RefStrings.MODID, "tileentity_core_receiver"));
 		GameRegistry.registerTileEntity(TileEntityCoreInjector.class, new ResourceLocation(RefStrings.MODID, "tileentity_core_injector"));
+		GameRegistry.registerTileEntity(TileEntityCoreCreativeInjector.class, new ResourceLocation(RefStrings.MODID, "tileentity_core_creative_injector"));
 		GameRegistry.registerTileEntity(TileEntityCoreStabilizer.class, new ResourceLocation(RefStrings.MODID, "tileentity_core_stabilizer"));
 		GameRegistry.registerTileEntity(DFCExchangerTE.class, new ResourceLocation(RefStrings.MODID, "tileentity_core_exchanger"));
 		GameRegistry.registerTileEntity(TileEntityCore.class, new ResourceLocation(RefStrings.MODID, "tileentity_core_core"));

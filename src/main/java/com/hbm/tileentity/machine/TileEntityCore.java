@@ -76,6 +76,8 @@ public class TileEntityCore extends TileEntityMachineBase implements ITickable, 
 		ams_core_wormhole(HBMSoundEvents.dfc_tw, (intended,distance) ->
 				Math.pow(MathHelper.clamp(1 - (distance - 3) / 40, 0, 1), 2)),
 		ams_core_eyeofharmony(HBMSoundEvents.dfc_eoh, (intended,distance) ->
+				Math.pow(MathHelper.clamp(1 - (distance - 3) / 150, 0, 1), 3)),
+		ams_core_eyeofgarbagebin(HBMSoundEvents.dfc_eoh, (intended,distance) ->
 				Math.pow(MathHelper.clamp(1 - (distance - 3) / 150, 0, 1), 3));
 		public final SoundEvent sfx;
 		public final BiFunction<Float, Double, Double> attentuationFunction;
@@ -570,7 +572,13 @@ public class TileEntityCore extends TileEntityMachineBase implements ITickable, 
 					exp.posX = pos.getX();
 					exp.posY = pos.getY();
 					exp.posZ = pos.getZ();
-					exp.destructionRange = 20+(int)Math.pow(temperature,0.4);
+					int baseRange = 20+(int)Math.pow(temperature,0.4);
+					// Eye of Garbage Bin gets 1000x explosion multiplier
+					if(client_type == Cores.ams_core_eyeofgarbagebin) {
+						exp.destructionRange = baseRange * 1000;
+					} else {
+						exp.destructionRange = baseRange;
+					}
 					exp.speed = 25;
 					exp.coefficient = 1.0F;
 					exp.waste = false;
@@ -602,7 +610,12 @@ public class TileEntityCore extends TileEntityMachineBase implements ITickable, 
 						DFCBlastParticle blast = new DFCBlastParticle((float)col.red,(float)col.green,(float)col.blue);
 						blast.emit(new Vec3d(pos).add(0.5,0.5,0.5),new Vec3d(0,1,0),world.provider.getDimension(),200);
 
-						ExplosionNT nt = new ExplosionNT(world,null,pos.getX()+0.5f, pos.getY()+0.5f, pos.getZ()+0.5f,50);
+						float initialExplosionSize = 50;
+						// Eye of Garbage Bin gets 1000x explosion multiplier
+						if(client_type == Cores.ams_core_eyeofgarbagebin) {
+							initialExplosionSize = 50000;
+						}
+						ExplosionNT nt = new ExplosionNT(world,null,pos.getX()+0.5f, pos.getY()+0.5f, pos.getZ()+0.5f,initialExplosionSize);
 						nt.maxExplosionResistance = 20;
 						nt.iterationLimit = 150;
 						nt.ignoreBlockPoses.add(pos);
@@ -646,33 +659,64 @@ public class TileEntityCore extends TileEntityMachineBase implements ITickable, 
 						explosionClock = time;
 						if (explosionIn <= 15 && !finalPhase) {
 							finalPhase = true;
-							PacketDispatcher.wrapper.sendToAllAround(
-									new CommandLeaf.ShakecamPacket(new String[]{
-											"type=smooth",
-											"preset=RUPTURE",
-											"blurDulling*2",
-											"speed*1.5",
-											"duration/2",
-											"range=300"
-									}).setPos(pos),
-									new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 400)
-							);
-							PacketDispatcher.wrapper.sendToAllAround(
-									new CommandLeaf.ShakecamPacket(new String[]{
-											"type=smooth",
-											"preset=QUAKE",
-											"blurDulling*4",
-											"speed*3",
-											"duration=40",
-											"range=300"
-									}).setPos(pos),
-									new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 400)
-							);
-							LeafiaPacket._start(this)
-									.__write(packetKeys.PLAY_SOUND.key, 3)
-									.__sendToAll();
-
-							ExplosionNT nt = new ExplosionNT(world,null,pos.getX()+0.5f, pos.getY()+0.5f, pos.getZ()+0.5f,150);
+							// Enhanced effects for Eye of Garbage Bin
+							if(client_type == Cores.ams_core_eyeofgarbagebin) {
+								PacketDispatcher.wrapper.sendToAllAround(
+										new CommandLeaf.ShakecamPacket(new String[]{
+												"type=smooth",
+												"preset=RUPTURE",
+												"blurDulling*4",
+												"speed*3",
+												"duration*2",
+												"range=500"
+										}).setPos(pos),
+										new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 600)
+								);
+								PacketDispatcher.wrapper.sendToAllAround(
+										new CommandLeaf.ShakecamPacket(new String[]{
+												"type=smooth",
+												"preset=QUAKE",
+												"blurDulling*8",
+												"speed*5",
+												"duration*3",
+												"range=500"
+										}).setPos(pos),
+										new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 600)
+								);
+							} else {
+								PacketDispatcher.wrapper.sendToAllAround(
+										new CommandLeaf.ShakecamPacket(new String[]{
+												"type=smooth",
+												"preset=RUPTURE",
+												"blurDulling*2",
+												"speed*1.5",
+												"duration/2",
+												"range=300"
+										}).setPos(pos),
+										new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 400)
+								);
+								PacketDispatcher.wrapper.sendToAllAround(
+										new CommandLeaf.ShakecamPacket(new String[]{
+												"type=smooth",
+												"preset=QUAKE",
+												"blurDulling*4",
+												"speed*3",
+												"duration=40",
+												"range=300"
+										}).setPos(pos),
+										new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 400)
+								);
+							}
+							
+							float explosionSize = 150;
+							// Eye of Garbage Bin gets 1000x explosion multiplier
+							try {
+								Cores coreType = Cores.valueOf(inventory.getStackInSlot(1).getItem().getRegistryName().getPath());
+								if(coreType == Cores.ams_core_eyeofgarbagebin) {
+									explosionSize = 150000;
+								}
+							} catch (Exception ignored) {}
+							ExplosionNT nt = new ExplosionNT(world,null,pos.getX()+0.5f, pos.getY()+0.5f, pos.getZ()+0.5f,explosionSize);
 							nt.iterationLimit = 150;
 							nt.overrideResolution(24);
 							nt.ignoreBlockPoses.add(pos);
@@ -824,6 +868,27 @@ public class TileEntityCore extends TileEntityMachineBase implements ITickable, 
 					ParticleEyeOfHarmony fx = new ParticleEyeOfHarmony(world,pos,r,g,b,scale);
 					Minecraft.getMinecraft().effectRenderer.addEffect(fx);
 					angle = angle + lightRotateSpeed;
+					if (angle > 360)
+						angle -= 360;
+				}
+				// Eye of Garbage Bin gets chaotic green/brown particle effects
+				if (client_type == Cores.ams_core_eyeofgarbagebin) {
+					// Spawn particles every 2 ticks to avoid lag
+					if (world.rand.nextInt(2) == 0) {
+						double offsetX = (world.rand.nextDouble() - 0.5) * 2;
+						double offsetY = (world.rand.nextDouble() - 0.5) * 2;
+						double offsetZ = (world.rand.nextDouble() - 0.5) * 2;
+						
+						// Green waste particles
+						float r = 0.2F + world.rand.nextFloat() * 0.3F;
+						float g = 0.6F + world.rand.nextFloat() * 0.4F;
+						float b = 0.1F + world.rand.nextFloat() * 0.2F;
+						
+						ParticleEyeOfHarmony fx = new ParticleEyeOfHarmony(world, pos, r, g, b, (float) Math.log(temperature/50+1));
+						Minecraft.getMinecraft().effectRenderer.addEffect(fx);
+					}
+					// Faster rotation for chaotic effect
+					angle = angle + lightRotateSpeed * 2;
 					if (angle > 360)
 						angle -= 360;
 				}

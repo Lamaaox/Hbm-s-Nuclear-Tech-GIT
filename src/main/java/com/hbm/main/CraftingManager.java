@@ -1718,6 +1718,7 @@ public class CraftingManager {
 		addRecipeAuto(new ItemStack(ModItems.ams_core_sing, 1), "EAE", "ASA", "EAE", 'E', ModItems.plate_euphemium, 'A', new IngredientContainsTag(ItemCell.getFullCell(ModForgeFluids.ASCHRAB)), 'S', ModItems.singularity);
 		addRecipeAuto(new ItemStack(ModItems.ams_core_wormhole, 1), "DPD", "PSP", "DPD", 'D', ModItems.plate_dineutronium, 'P', Powders.powder_spark_mix, 'S', ModItems.singularity);
 		addRecipeAuto(new ItemStack(ModItems.ams_core_eyeofharmony, 1), "ALA", "LSL", "ALA", 'A', ModItems.plate_dalekanium, 'L', new IngredientContainsTag(ItemFluidTank.getFullBarrel(FluidRegistry.LAVA)), 'S', ModItems.black_hole);
+		addRecipeAuto(new ItemStack(ModItems.ams_core_eyeofgarbagebin, 1), "ABA", "BSB", "ABA", 'A', ModItems.plate_dalekanium, 'B', ModItems.black_hole, 'S', ModItems.black_hole);
 		addRecipeAuto(new ItemStack(ModItems.ams_core_thingy), "GGG", "N N", " S ", 'N', GOLD.nugget(), 'G', GOLD.ingot(), 'S', Batteries.battery_spark_cell_10000);
 		addRecipeAuto(new ItemStack(ModItems.photo_panel), " G ", "IPI", " C ", 'G', KEY_ANYPANE, 'I', ModItems.plate_polymer, 'P', NETHERQUARTZ.dust(), 'C', ModItems.circuit_aluminium);
 		addRecipeAuto(new ItemStack(ModBlocks.machine_satlinker), "PSP", "SCS", "PSP", 'P', STEEL.plate(), 'S', STAR.ingot(), 'C', ModItems.sat_chip);
