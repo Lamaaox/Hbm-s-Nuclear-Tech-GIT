@@ -4,6 +4,7 @@ import com.hbm.forgefluid.FFUtils;
 import com.hbm.forgefluid.ModForgeFluids;
 import com.hbm.inventory.container.ContainerCoreCreativeInjector;
 import com.hbm.lib.RefStrings;
+import com.hbm.packet.NBTControlPacket;
 import com.hbm.packet.PacketDispatcher;
 import com.hbm.tileentity.machine.TileEntityCore;
 import com.hbm.tileentity.machine.TileEntityCoreCreativeInjector;
@@ -49,7 +50,7 @@ public class GUICoreCreativeInjector extends GuiInfoContainer {
 	protected void actionPerformed(GuiButton button) {
 		NBTTagCompound tag = new NBTTagCompound();
 		tag.setByte("fuelType", (byte) button.id);
-		injector.receiveClientPacket(tag);
+		PacketDispatcher.wrapper.sendToServer(new NBTControlPacket(tag, injector.getPos()));
 	}
 	
 	@Override

@@ -2,11 +2,13 @@ package com.hbm.tileentity.machine;
 
 import com.hbm.forgefluid.FFUtils;
 import com.hbm.forgefluid.ModForgeFluids;
+import com.hbm.interfaces.IControlReceiver;
 import com.hbm.interfaces.ITankPacketAcceptor;
 import com.hbm.packet.FluidTankPacket;
 import com.hbm.packet.PacketDispatcher;
 import com.leafia.contents.machines.powercores.dfc.DFCBaseTE;
 import com.leafia.dev.container_utility.LeafiaPacket;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
@@ -25,7 +27,7 @@ import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class TileEntityCoreCreativeInjector extends DFCBaseTE implements ITickable, IFluidHandler, ITankPacketAcceptor {
+public class TileEntityCoreCreativeInjector extends DFCBaseTE implements ITickable, IFluidHandler, ITankPacketAcceptor, IControlReceiver {
 
     public FluidTank[] tanks;
     public static final int range = 50;
@@ -181,9 +183,17 @@ public class TileEntityCoreCreativeInjector extends DFCBaseTE implements ITickab
         return "dfc_creative_injector";
     }
 
-    public void receiveClientPacket(NBTTagCompound tag) {
-        byte fuelType = tag.getByte("fuelType");
-        setFuel(fuelType);
+    @Override
+    public boolean hasPermission(EntityPlayer player) {
+        return true; // Creative injector - anyone can use
+    }
+
+    @Override
+    public void receiveControl(NBTTagCompound data) {
+        if (data.hasKey("fuelType")) {
+            byte fuelType = data.getByte("fuelType");
+            setFuel(fuelType);
+        }
     }
 
     private void setFuel(int fuelType) {
